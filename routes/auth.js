@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
   try {
     const userExists = await User.findOne({ username });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists dd' });
+      return res.status(400).json({ message: 'User already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -47,11 +47,17 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
 router.get('/users', async (req, res) => {
+    const { username, password } = req.body;
+  
     try {
-      const users = await User.find({}, '-password'); // Exclude the password field from the response
-      res.status(200).json(users);
+        const users = await User.find({}, '-password');
+        res.status(200).json(users);
+
+
     } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
   });
+module.exports = router;
