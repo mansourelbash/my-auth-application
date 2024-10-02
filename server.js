@@ -12,13 +12,10 @@ connectDB();
 const app = express();
 
 app.use(express.json());
-const allowedOrigins = [
-  'http://localhost:5731',
-  'https://my-auth-application.onrender.com'
-];
-
 app.use(cors({
-  origin: allowedOrigins,
+  origin: ['http://localhost:5731', 'https://my-auth-application.onrender.com'], // Specify multiple origins if needed
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed methods
+  credentials: true // Enable cookies or other credentials if needed
 }));
 
 app.use('/api/auth', authRoutes);
