@@ -12,14 +12,8 @@ connectDB();
 const app = express();
 
 app.use(express.json());
-const allowedOrigins = [
-  'http://localhost:5731',
-  'https://my-auth-application.onrender.com'
-];
+app.use(cors());
 
-app.use(cors({
-  origin: allowedOrigins,
-}));
 
 app.use('/api/auth', authRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
