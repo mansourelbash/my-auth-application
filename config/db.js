@@ -5,7 +5,6 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    // No need for useNewUrlParser and useUnifiedTopology in newer versions of Mongoose
     await mongoose.connect(process.env.MONGO_URI);
     console.log('MongoDB connected');
   } catch (error) {

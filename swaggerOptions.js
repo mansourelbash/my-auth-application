@@ -3,20 +3,29 @@ const swaggerJsDoc = require('swagger-jsdoc');
 
 const swaggerOptions = {
     swaggerDefinition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'Your API Title',
-            version: '1.0.0',
-            description: 'API Documentation for your application',
+      openapi: '3.0.0', // or '2.0.0' for Swagger 2.0
+      info: {
+        title: 'Your API Title',
+        version: '1.0.0',
+        description: 'API documentation',
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
         },
-        servers: [
-            {
-                url: 'http://localhost:5000', // Update with your production URL if needed
-            },
-        ],
+      },
+      security: [
+        {
+          bearerAuth: [], // Apply to all endpoints
+        },
+      ],
     },
-    apis: ['./routes/*.js'], // Path to the API docs
-};
+    apis: ['./routes/*.js'], // Path to your API docs
+  };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 module.exports = swaggerDocs;

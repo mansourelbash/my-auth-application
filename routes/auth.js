@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/User'); // Adjust the path to your User model
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const router = express.Router();
  * /api/auth/register:
  *   post:
  *     summary: Register a new user
- *     description: Creates a new user and returns a JWT token.
+ *     description: Creates a new user with a specified role and returns a JWT token.
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -23,6 +23,13 @@ const router = express.Router();
  *                 type: string
  *               password:
  *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: [admin, editor, viewer, user]
+ *                 default: user
+ *             required:
+ *               - username
+ *               - password
  *     responses:
  *       201:
  *         description: User created successfully.
@@ -39,7 +46,7 @@ const router = express.Router();
  *         description: Server error.
  */
 router.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role } = req.body;
 
   try {
     const userExists = await User.findOne({ username });
@@ -48,7 +55,7 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ username, password: hashedPassword });
+    const user = await User.create({ username, password: hashedPassword, role });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(201).json({ token });
@@ -75,6 +82,9 @@ router.post('/register', async (req, res) => {
  *                 type: string
  *               password:
  *                 type: string
+ *             required:
+ *               - username
+ *               - password
  *     responses:
  *       200:
  *         description: Login successful.
@@ -104,7 +114,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -132,12 +142,15 @@ router.post('/login', async (req, res) => {
  *                     type: string
  *                   username:
  *                     type: string
+ *                   role:
+ *                     type: string
+ *                     enum: [admin, editor, viewer, user]
  *       500:
  *         description: Server error.
  */
 router.get('/users', async (req, res) => {
   try {
-    const users = await User.find({}, '-password');
+    const users = await User.find({}, '-password'); // Exclude password from the results
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

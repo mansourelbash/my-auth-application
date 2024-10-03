@@ -12,11 +12,13 @@ const Login = ({ setToken }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  console.log('Base URL:', process.env.REACT_APP_BASE_URL);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://my-auth-application.onrender.com/api/auth/login', formData);
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/login`, formData);
+
       console.log(res,'resresresresresresres'); // Check the structure of the response
 
       setToken(res.data.token);

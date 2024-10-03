@@ -1,6 +1,8 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
+const realEstateRoutes = require('./routes/realEstate');
+
 const dotenv = require('dotenv');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -16,6 +18,8 @@ app.use(cors());
 
 
 app.use('/api/auth', authRoutes);
+app.use('/api/realestate', realEstateRoutes);
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const PORT = process.env.PORT || 5000;

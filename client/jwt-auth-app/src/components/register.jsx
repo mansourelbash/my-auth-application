@@ -16,7 +16,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://my-auth-application.onrender.com/api/auth/register', formData);
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/register`, formData);
       console.log(res,'resresresres', formData)
     //   setMessage('User registered successfully. Token: ' + res.data.token);
     } catch (err) {
