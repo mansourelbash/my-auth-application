@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Loading, Text, Card, Grid } from '@nextui-org/react';
+import {Grid } from '@nextui-org/react';
+import {Card, CardHeader, CardBody, Image} from "@nextui-org/react";
+
 import Register from './components/register';
 import Login from './components/login';
 import PropertyList from './components/PropertyList'; 
+import {Button, ButtonGroup} from "@nextui-org/button";
+import {Spinner} from "@nextui-org/react";
+import {Input} from "@nextui-org/input";
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
@@ -73,11 +78,11 @@ const App = () => {
   };
 
   if (loadingProperties) {
-    return <Loading size="lg" />;
+    return <Spinner size="lg" />;
   }
 
   if (error) {
-    return <Text color="error">Error: {error}</Text>;
+    return <p color="error">Error: {error}</p>;
   }
 
   return (
@@ -89,24 +94,21 @@ const App = () => {
         </>
       ) : (
         <>
-          <Text h1>Welcome, you're logged in!</Text>
+          <p h1>Welcome, you're logged in!</p>
           <PropertyList properties={properties} />
           <Button onClick={() => getUsers()} disabled={loadingUsers}>
-            {loadingUsers ? <Loading size="sm" /> : 'Get Users'}
+            {loadingUsers ? <Spinner size="sm" /> : 'Get Users'}
           </Button>
           {users.length > 0 && (
-            <Grid.Container gap={2}>
-              {users.map(user => (
-                <Grid key={user._id} xs={12}>
-                  <Card>
-                    <Card.Body>
-                      <Text>{user.username}</Text>
-                    </Card.Body>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid.Container>
-          )}
+  users.map(user => (
+    <Card key={user._id} xs={12}>
+      <CardBody>
+        <p>{user.username}</p>
+      </CardBody>
+    </Card>
+  ))
+)}
+
           <Button onClick={handleLogout}>Logout</Button>
         </>
       )}
