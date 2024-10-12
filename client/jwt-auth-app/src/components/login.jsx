@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
-const Login = ({ setToken }) => {
+import { redirect, replace } from 'react-router-dom';
+const Login = ({ setToken, setUserRole }) => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -16,15 +16,21 @@ const Login = ({ setToken }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
       const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/login`, formData);
-
-      console.log(res,'resresresresresresres'); // Check the structure of the response
-
+  
+      // Set the token and user role
       setToken(res.data.token);
+      setUserRole(res.data.role);
+      localStorage.setItem('userId', res.data.userId);
+  
       setMessage('Login successful');
+      replace("/otherapp/login");
     } catch (err) {
-      setMessage('Error: ' + err.response.data.message);
+      // Check if the error has a response from the server
+      const errorMessage = err.response?.data?.message || 'An unexpected error occurred.';
+      setMessage('Error: ' + errorMessage);
     }
   };
 

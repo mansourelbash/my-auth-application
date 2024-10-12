@@ -1,7 +1,7 @@
 const express = require('express');
 const RealEstate = require('../models/RealEstate');
 const User = require('../models/User');
-const verifyToken = require('../middleware/authMiddleware');
+const { verifyToken, verifyAdmin } = require('../middleware/verifyToken');
 const { v4: uuidv4 } = require('uuid'); // Importing uuid library
 
 const router = express.Router();
@@ -75,7 +75,7 @@ router.post('/add', verifyToken, async (req, res) => {
     const { title, description, price, address, propertyType, size, bedrooms, bathrooms, features, images } = req.body;
   
     try {
-      const user = await User.findById(req.user.id);
+      const user = await User.findById(req.user._id);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -172,7 +172,7 @@ router.post('/add-multiple', verifyToken, async (req, res) => {
     const listings = req.body; // Expecting an array of listings
 
     try {
-      const user = await User.findById(req.user.id);
+      const user = await User.findById(req.user._id);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -270,7 +270,7 @@ router.put('/update/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const realEstate = await RealEstate.findOne({ id, user: req.user.id });
+    const realEstate = await RealEstate.findOne({ id, user: req.user._id });
     if (!realEstate) {
       return res.status(404).json({ message: 'Real estate listing not found or you do not have permission to update it' });
     }
@@ -322,7 +322,7 @@ router.delete('/delete/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const realEstate = await RealEstate.findOneAndDelete({ id, user: req.user.id });
+    const realEstate = await RealEstate.findOneAndDelete({ id, user: req.user._id });
     if (!realEstate) {
       return res.status(404).json({ message: 'Real estate listing not found or you do not have permission to delete it' });
     }
